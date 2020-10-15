@@ -43,7 +43,7 @@ export const deletemessages = async (req, res) => {
   try {
     const deletemessages = await messages.findOneAndDelete({ _id: req.params.userId });
     res.status(200).json({
-      success: "Deleted user successfully",
+      success: "Deleted message successfully",
       user: deletemessages,
     });
   } catch (error) {
@@ -51,7 +51,7 @@ export const deletemessages = async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "failed to delete user",
+      message: "failed to delete message",
     });
   }
 };
@@ -73,7 +73,7 @@ export const updatemessages = async (req, res) => {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "failed to update users",
+      message: "failed to update message",
     });
   }
 };
