@@ -3,17 +3,16 @@ import comments from "../commentsModels.js";
 export const registerComments = async (req, res) => {
   try {
     const createdComments = await comments.create({
-      
+      postid: req.body.postid,
       comment: req.body.comment,
     });
     res.status(201).json({
-      success: true,
-      message: createdComments,
+      message: "Comment successfully",
+      comment: createdComments,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      success: false,
       message: "failed to insert a comment",
     });
   }
@@ -21,10 +20,10 @@ export const registerComments = async (req, res) => {
 
 export const findComments = async (req, res) => {
   try {
-    const usersComments = await comments.find();
+    const usersComments = await comments.find({ postid: req.params.postid });
     res.status(200).json({
-      success: true,
-      message: usersComments,
+      message: "All comments",
+      comments: usersComments,
     });
   } catch (error) {
     console.log(error);

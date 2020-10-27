@@ -12,11 +12,17 @@ import {
 } from "../controllers/comments.js";
 
 
+
 const router = express.Router();
 
-router.post("/registercomments", registerComments);
-router.get("/findcomments", findComments);
-router.delete("/deletecomments/:userId", deleteComments);
+router.get('/test',(req,res)=>{
+  res.render("posts/addOrEdit",{
+    viewTitle:"Add and updated article"
+  });
+});
+router.post("/comment", registerComments);
+router.get("/comments", findComments);
+router.delete("/dcomments/:cid", deleteComments);
 router.post("/post", post);
 router.get("/posts", findposts);
 router.delete("/dpost/:postId", deleteposts);

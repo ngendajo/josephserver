@@ -1,6 +1,9 @@
+import errorRes from '../helpers/errorHandler.js';
+import successHandler from '../helpers/success.js';
 import posts from "../postsModel.js";
 
 export const post= async (req, res) => {
+  const { title, content } = req.body;
   try {
     var datev1,datev2,datev3,datev4,datev5,datev6,datev7;
     var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -13,19 +16,14 @@ export const post= async (req, res) => {
                 datev6=d.getSeconds();
                 datev7=datev1+" "+datev2+" "+datev3+" "+datev4+":"+datev5+":"+datev6;
     const createdposts = await posts.create({
-      title: req.body.title,
-      content: req.body.content,
+      title:title,
+      content:content,
       createdAt:datev7,
     });
-    res.status(201).json({
-      message: "post created successfully",
-      post: createdposts,
-    });
+    successHandler(res, 201, 'new post created successfully', createdposts);
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      error: "failed to insert a post",
-    });
+    return errorRes(res, 500, 'Failed to create a post', error);
   }
 };
 
