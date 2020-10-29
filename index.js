@@ -22,6 +22,7 @@ server.use(cors());
 
 server.use(express.json());
 server.use(usersRoutes);
+server.use('/comments', usersRoutes);
 server.use(helmet());
 server.use(morgan('dev'));
 server.use((req, res) => {

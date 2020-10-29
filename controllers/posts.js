@@ -18,7 +18,10 @@ export const post= async (req, res) => {
     const createdposts = await posts.create({
       title:title,
       content:content,
-      createdAt:datev7,
+      createdAt:datev7, 
+      likes: 0,
+      commentsCount: 0,
+      views: 0,
     });
     successHandler(res, 201, 'new post created successfully', createdposts);
   } catch (error) {
@@ -29,20 +32,23 @@ export const post= async (req, res) => {
 
 export const findposts = async (req, res) => {
   try {
-    const usersposts = await posts.find();
-    res.status(200).json({
-      message: "Retrivel post successfully",
-      posts: usersposts,
-    });
+    const usersposts = await posts.find().sort({ createdAt: -1 });
+    successHandler(res, 200, 'successfully read all posts',usersposts);
   } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      message: "failed to find posts",
-    });
+    errorRes(res, 500, 'there was error getting all posts', error);
   }
 };
-
+export const getOnePost = async (req, res) => {
+  try {
+    const onePost = await posts.findById({_id:req.params.postId});
+    onePost.views += 1;
+    await onePost.save();
+    return successHandler(res, 200, 'post got successfully', onePost);
+  } catch (error) {
+    console.log(error);
+    return errorRes(res, 404, 'not found on posts list', error);
+  }
+};
 export const deleteposts = async (req, res) => {
   try {
     const deleteposts = await posts.findOneAndDelete({ _id: req.params.postId });
@@ -68,12 +74,9 @@ export const updateposts = async (req, res) => {
         new: true,
       }
     );
-    res.status(200).json({
-      message: "Update successfully",
-      post: updatedposts,
-    });
+    return successHandler(res, 201, 'Updated post successfully', updatedposts);
   } catch (error) {
-    console.log(error);
+    console.log(error); 
     res.status(500).json({
       message: "failed to update posts",
     });

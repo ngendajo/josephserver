@@ -1,37 +1,53 @@
 import comments from "../commentsModels.js";
+import posts from "../postsModel.js";
+import errorRes from '../helpers/errorHandler.js';
+import successHandler from '../helpers/success.js';
 
-export const registerComments = async (req, res) => {
+export const createComment = async (req, res) => {
+  const { comment,createdAt } = req.body;
   try {
-    const createdComments = await comments.create({
-      postid: req.body.postid,
-      comment: req.body.comment,
+    if (!comment) errorRes(res, 500, 'Some filed are not field');
+    const ocomment = await comments.create({
+      comment,
+      createdAt,
     });
-    res.status(201).json({
-      message: "Comment successfully",
-      comment: createdComments,
-    });
+    const post = await posts.findById(req.params.postId);
+    if (!post) errorRes(res, 404, 'no such post found');
+    post.comments.push(ocomment._id);
+    post.commentsCount += 1;
+    await post.save();
+
+    successHandler(res, 201, 'successfully commented', ocomment);
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      message: "failed to insert a comment",
-    });
+    errorRes(res, 500, 'there was error commenting');
+  }
+};
+export const getAllCommentsOnPost = async (req, res) => {
+  try {
+    const foundPost = await posts.findById({_id:req.params.postId}).populate('comments');
+    successHandler(
+      res,
+      200,
+      'successfully fetched all comments',
+      foundPost.comments,
+    );
+  } catch (error) {
+    console.log(error);
+    errorRes(res, 500, 'there was error fetching all comments');
   }
 };
 
-export const findComments = async (req, res) => {
+export const like = async (req, res) => {
   try {
-    const usersComments = await comments.find({ postid: req.params.postid });
-    res.status(200).json({
-      message: "All comments",
-      comments: usersComments,
-    });
+    const foundPost = await posts.findById({_id:req.params.postId});
+    if (!foundPost) errorRes(res, 404, 'cant find that post');
+    foundPost.likes += 1;
+    await foundPost.save();
+    successHandler(res, 200, 'successfully liked');
   } catch (error) {
     console.log(error);
-
-    res.status(500).json({
-      success: false,
-      message: "failed to find Comments",
-    });
+    errorRes(res, 500, 'there was error while liking');
   }
 };
 
