@@ -3,14 +3,9 @@ import "dotenv/config.js";
 import "./configs/database.js";
 import cors from 'cors';
 import usersRoutes from "./routes/menus.js";
-import path from "path";
-import exphbs from "express-handlebars";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import bodyperser from "body-parser";
 import helmet from 'helmet';
 import morgan from 'morgan';
-import swagger from 'swagger-ui-express';
 import errorRes from './helpers/errorHandler.js';
 
 const server = express();
